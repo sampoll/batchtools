@@ -43,12 +43,16 @@ Worker = R6Class("Worker",
       if (!is.null(max.load))
         assertNumber(max.load)
 
-      if (nodename == "localhost") {
+      # The quote manipulations are not working for me. For now, assume location of linux-helper 
+      # is same on remote host as on local. Eventually, make helper function to find path
+      # and return it, then call with \"Rscript -e 'batchtools:::scriptpath()'\"
+
+      # if (nodename == "localhost") {
         self$script = system.file("bin", "linux-helper", package = "batchtools")
-      } else {
-        args = c("-e", shQuote("message(system.file('bin/linux-helper', package = 'batchtools'))"))
-        self$script = tail(runOSCommand(Rscript(), args, nodename = nodename)$output, 1L)
-      }
+      # } else {
+      #   args = c("-e", shQuote("message(system.file('bin/linux-helper', package = 'batchtools'))"))
+      #   self$script = tail(runOSCommand(Rscript(), args, nodename = nodename)$output, 1L)
+      # }
 
       self$ncpus = ncpus %??% as.integer(self$run("number-of-cpus")$output)
       self$max.load = max.load %??% self$ncpus
