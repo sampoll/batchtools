@@ -4,9 +4,9 @@ Socket = R6Class("Socket",
     cl = NULL,
     pids = NULL,
 
-    initialize = function(ncpus) {
+    initialize = function(ncpus, names, port) {
       loadNamespace("snow")
-      self$cl = snow::makeSOCKcluster(rep.int("localhost", ncpus))
+      self$cl = snow::makeCluster(names, port=port, type = "SOCK")
       self$pids = character(ncpus)
       reg.finalizer(self, function(e) if (!is.null(e$cl)) { snow::stopCluster(e$cl); self$cl = NULL }, onexit = TRUE)
     },
@@ -49,13 +49,14 @@ Socket = R6Class("Socket",
 #' @return [\code{\link{ClusterFunctions}}].
 #' @family ClusterFunctions
 #' @export
-makeClusterFunctionsSocket = function(ncpus = NA_integer_, fs.latency = 65) {
+makeClusterFunctionsSocket = function(names, port, fs.latency = 65) {
+  ncpus <- length(names)
   assertCount(ncpus, positive = TRUE, na.ok = TRUE)
   if (is.na(ncpus)) {
     ncpus = max(getOption("mc.cores", parallel::detectCores()), 1L, na.rm = TRUE)
     info("Auto-detected %i CPUs", ncpus)
   }
-  p = Socket$new(ncpus)
+  p = Socket$new(ncpus, names, port)
 
   submitJob = function(reg, jc) {
     assertRegistry(reg, writeable = TRUE)
