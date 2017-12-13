@@ -29,12 +29,15 @@ makeClusterFunctionsSwarm = function(cname, ccmd, fs.latency = 65) { # nocov sta
     assertClass(jc, "JobCollection")
 
     # no need to do any load-balancing - swarm does it 
-    # launch service, get service-jobhash association, make structure and put in list
 
-    uriloc <- sub(reg$file.dir, '/registry', jc$uri)
-    logloc <- sub(reg$file.dir, '/registry', jc$log.file)
+    # Note: jobCollection object has its directory stored in it, so the local and
+    # container directories have to be the same. Moreover, they need to be 
+    # writable. So both the manager and container directories have to be 
+    # "/efs/btrun/registry"
 
-    args = c("start-job", cname, ccmd, uriloc, logloc, reg$file.dir, "/registry")
+    # TODO: check that this is the case
+
+    args = c("start-job", cname, ccmd, jc$uri, jc$log.file, reg$file.dir, reg$file.dir)
     res <- runOSCommand(script, args);
 
     if (res$exit.code != 0)  {
