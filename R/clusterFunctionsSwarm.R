@@ -31,7 +31,10 @@ makeClusterFunctionsSwarm = function(cname, ccmd, fs.latency = 65) { # nocov sta
     # no need to do any load-balancing - swarm does it 
     # launch service, get service-jobhash association, make structure and put in list
 
-    args = c("start-job", cname, ccmd, jc$uri, jc$log.file, ref$file.dir, "/registry")
+    uriloc <- sub(reg$file.dir, '/registry', jc$uri)
+    logloc <- sub(reg$file.dir, '/registry', jc$log.file)
+
+    args = c("start-job", cname, ccmd, uriloc, logloc, reg$file.dir, "/registry")
     res <- runOSCommand(script, args);
 
     if (res$exit.code != 0)  {
