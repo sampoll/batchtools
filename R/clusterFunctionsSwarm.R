@@ -22,7 +22,7 @@
 makeClusterFunctionsSwarm = function(cname, ccmd, fs.latency = 65) { # nocov start
 
   # make empty list of service objects
-  script = system.file("bin", "swarm-helper", package = "batchtools")
+  script = system.file("bin", "execute.pl", package = "batchtools")
 
   submitJob = function(reg, jc) {
     assertRegistry(reg, writeable = TRUE)
@@ -44,7 +44,7 @@ makeClusterFunctionsSwarm = function(cname, ccmd, fs.latency = 65) { # nocov sta
       makeSubmitJobResult(status = 101L, batch.id = NA_character_, msg = "Submit failed.")
     }
     else  {
-      makeSubmitJobResult(status = 101L, batch.id = res$out)
+      makeSubmitJobResult(status = 0L, batch.id = res$out)
     }
   }
 
@@ -71,20 +71,20 @@ makeClusterFunctionsSwarm = function(cname, ccmd, fs.latency = 65) { # nocov sta
 
   }
 
-  # Remove services whose tasks are Complete
+  # Remove services whose tasks are Complete 
   rmcomplete <- function(reg)  {
-    args <- c("rm-complete")
+    args <- c("rm-completed")
     res <- runOSCommand(script, args)
   }
 
   # Remove all services 
-  rmcomplete <- function(reg)  {
+  rmall <- function(reg)  {
     args <- c("rm-all")
     res <- runOSCommand(script, args)
   }
 
   makeClusterFunctions(name = "Swarm", submitJob = submitJob, killJob = killJob, listJobsRunning = listJobsRunning,
-    store.job.collection = TRUE, fs.latency = fs.latency, hooks=list(post.sync=rmcomplete, pre.submit=rmall))
+    store.job.collection = TRUE, fs.latency = fs.latency, hooks=list(pre.submit=rmall))
 
 } # nocov end
 

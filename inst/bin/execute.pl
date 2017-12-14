@@ -35,9 +35,8 @@ if ($cmd eq "start-job")  {
   $cmd .= sprintf(" -e JC=\"%s\" -e JL=\"%s\"", $joburi, $joblog);
   $cmd .= sprintf(" --mount type=bind,source=%s,destination=%s", $regsrc, $regdst);
   $cmd .= " $cname \"$ccmd\"";
-  printf("CMD = %s\n", $cmd);
   my $res = `$cmd`;
-  printf("$res\n");
+  print("$res");
 
 }
 
@@ -50,6 +49,7 @@ elsif ($cmd eq "kill-job")  {
   my $svc = $ARGV[1];
   my $cmd = sprintf("docker service rm %s\n", $svc);
   my $res = `$cmd`;
+  print("$res");
 }
 
 # list-jobs 
@@ -83,10 +83,9 @@ elsif ($cmd eq "rm-completed")  {
     my $taskdata = $taskout[1];  # discard header
     my ($taskid, undef, undef, undef, undef, $state) = split(/[\s]+/, $taskdata);
     if ($state eq "Completed")  {
-       my $cmd = `docker service rm $svcid`;
+       my $res = `docker service rm $svcid`;
     }
   }
-
 }
 
 # rm-all
@@ -97,7 +96,7 @@ elsif ($cmd eq "rm-all")  {
   for my $s (@services)  {
     chomp($s);
     my ($svcid,undef) = split(/[\s]+/, $s);
-    my $cmd = `docker service rm $svcid`;
+    my $res = `docker service rm $svcid`;
   }
 }
 0;
