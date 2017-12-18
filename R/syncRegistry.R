@@ -32,8 +32,8 @@ sync = function(reg) {
   updates = rbindlist(updates, fill = TRUE) # -> fill = TRUE for #135
 
   if (nrow(updates) > 0L) {
-    # expr = quote(`:=`(started = i.started, done = i.done, error = i.error, mem.used = i.mem.used))
-    expr = quote(`:=`(started = i.started, done = i.done, error = i.error, mem.used = i.memory))
+    expr = quote(`:=`(started = i.started, done = i.done, error = i.error, mem.used = i.mem.used))
+    # expr = quote(`:=`(started = i.started, done = i.done, error = i.error, mem.used = i.memory))
     reg$status[updates, eval(expr), on = "job.id"]
     if (reg$writeable)
       file.remove.safely(fns[!failed])
